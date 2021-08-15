@@ -12,32 +12,94 @@ namespace dog_api.Controllers
     [Route("dog")]
     public class DogController : Controller
     {
-        static readonly HttpClient client = new ();
+        static readonly HttpClient client = new HttpClient();
+        static readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         [HttpGet("breeds")]
-        public async Task<ActionResult> getBreeds()
+        public async Task<ActionResult> GetBreeds()
         {
             try
             {
-                string breedsJson = await client.GetStringAsync("https://dog.ceo/api/breeds/list/all");
-                var rawBreeds = JsonSerializer.Deserialize<RawBreedModel>(breedsJson).Message;
-                // Convert breed format
-                var breeds = new List<BreedModel>();
-                foreach (var key in rawBreeds.Keys)
+                string responseJson = await client.GetStringAsync("https://dog.ceo/api/breeds/list/all");
+                var response = JsonSerializer.Deserialize<RawBreedModel>(responseJson, jsonSerializerOptions);
+
+                if (response.Status == "success")
                 {
-                    breeds.Add(new BreedModel
+                    var rawBreeds = response.Message;
+                    // Convert breed format
+                    var breedListResult = new BreedListResponse();
+
+                    foreach (var key in rawBreeds.Keys)
                     {
-                        Breed = key,
-                        Subbreeds = rawBreeds[key]
-                    });
+                        breedListResult.Breeds.Add(new BreedModel
+                        {
+                            Breed = key,
+                            Subbreeds = rawBreeds[key]
+                        });
+                    }
+                    return Ok(breedListResult);
                 }
-                return Ok(breeds);
+                else
+                {
+                    return BadRequest(response.Status);
+                }
             }
-            catch (HttpRequestException e)
+            catch (Exception ex)
             {
-                Console.WriteLine("Message :{0} ", e.Message);
+                Console.WriteLine("Message :{0} ", ex.Message);
                 return BadRequest();
             }
-            // TODO: Json Parse Exception
+        }
+
+        [HttpGet("images")]
+        public async Task<ActionResult> GetDogImageByBreed([FromQuery] string breed, [FromQuery] string subbreed)
+        {
+            try
+            {
+                string requestUrl;
+                if (subbreed != null)
+                {
+                    requestUrl = $"https://dog.ceo/api/breed/{breed}/{subbreed}/images";
+                }
+                else
+                {
+                    requestUrl = $"https://dog.ceo/api/breed/{breed}/images";
+                }
+                HttpResponseMessage rawResponse = await client.GetAsync(requestUrl);
+                if (rawResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    rawResponse.EnsureSuccessStatusCode();
+                    string responseJson = await rawResponse.Content.ReadAsStringAsync();
+
+                    var response = JsonSerializer.Deserialize<RawDogImageListModel>(responseJson, jsonSerializerOptions);
+
+                    if (response.Status == "success")
+                    {
+
+                        var dogImagesResult = new DogImagesResponseModel
+                        {
+                            Images = response.Message
+                        };
+                        return Ok(dogImagesResult);
+                    }
+                    else
+                    {
+                        return BadRequest(response.Status);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Message :{0} ", ex.Message);
+                return BadRequest("Not found");
+            }
         }
     }
 }

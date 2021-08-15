@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace dog_api.Models
 {
-    public class RawBreedModel
+    public class RawDogImageListModel
     {
-        public Dictionary<string, List<string>> Message { get; set; }
+        public List<string> Message { get; set; }
         public string Status { get; set; }
     }
 }
