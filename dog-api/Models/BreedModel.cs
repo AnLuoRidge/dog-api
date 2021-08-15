@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace dog_api.Models
+namespace DogApi.Models
 {
     public class BreedModel
     {

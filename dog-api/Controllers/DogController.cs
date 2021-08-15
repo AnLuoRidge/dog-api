@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using dog_api.Models;
+using DogApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 
-namespace dog_api.Controllers
+namespace DogApi.Controllers
 {
     [Route("dog")]
     public class DogController : Controller
@@ -30,7 +30,7 @@ namespace dog_api.Controllers
                 {
                     var rawBreeds = response.Message;
                     // Convert breed format
-                    var breedListResult = new BreedListResponse();
+                    var breedListResult = new BreedListResponseModel();
 
                     foreach (var key in rawBreeds.Keys)
                     {

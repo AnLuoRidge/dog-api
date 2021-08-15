@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace dog_api.Models
+namespace DogApi.Models
 {
-    public class BreedListResponse
+    public class BreedListResponseModel
     {
         public List<BreedModel> Breeds { get; set; }
 
-        public BreedListResponse()
+        public BreedListResponseModel()
         {
             this.Breeds = new List<BreedModel>();
         }

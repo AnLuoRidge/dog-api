@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace dog_api.Models
+namespace DogApi.Models
 {
     public class RawBreedModel
     {
