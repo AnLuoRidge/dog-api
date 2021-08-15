@@ -19,7 +19,6 @@
     },
     "dog_api": {
       "commandName": "Project",
-      "launchBrowser": true,
       "launchUrl": "dog/breeds",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {

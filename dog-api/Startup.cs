@@ -14,6 +14,8 @@ namespace dog_api
 {
     public class Startup
     {
+        readonly string allowCorsOrigins = "_allowCorsOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -24,6 +26,14 @@ namespace dog_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: allowCorsOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:3000").AllowAnyHeader();
+                                  });
+            });
             services.AddControllers();
         }
 
@@ -37,7 +47,7 @@ namespace dog_api
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCors(allowCorsOrigins);
 
             app.UseEndpoints(endpoints =>
             {
