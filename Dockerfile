@@ -2,4 +2,4 @@
 COPY /release/ App/
 WORKDIR /App
 ENTRYPOINT ["dotnet", "dog-api.dll"]
-EXPOSE 5000
+EXPOSE 80
